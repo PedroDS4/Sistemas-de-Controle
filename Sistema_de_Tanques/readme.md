@@ -138,3 +138,59 @@ $$
     G(s) = \frac{L_1(s)}{V_p(s)} = \frac{0.26}{s + 0.066}
 $$
 
+
+
+
+##**Controlando o nível do tanque: Controle de Sistema de Primeira ordem**
+
+Considerando a função de transferência linearizada em torno do ponto de operação
+
+$$
+    G(s) = \frac{L_1(s)}{V_p(s)} = \frac{0.26}{s + 0.066} = \frac{A}{s + \tau}
+$$
+
+E a função de transferência do controlador PID
+
+$$
+  C(s) = \frac{K_d s^2 + K_p s + K_I}{s}
+$$
+
+assim, a função de transferência de malha fechada com o controlador se torna
+
+$$
+G_{mf}(s) = \frac{ G(s) C(s)}{1 + G(s) C(s)} = \frac{ \frac{A(s^2 K_d + s K_p + K_I)}{s(s+\tau)} } {1  + \frac{A(s^2 K_d + s K_p + K_I)}{s(s+\tau)}}   = \frac{ \frac{1}{AK_d+1}(s^2 + K_p/K_ds + K_I/K_d)}{s^2 + \frac{(AK_p + \tau)}{AK_d+1}s + \frac{AK_I}{AK_d + 1} }
+$$
+
+considerando apenas um controlador PI, fazendo $K_d \rightarrow 0$, temos
+
+$$
+G_{mf}(s) = \frac{AK_p s + AK_I}{s^2 + (AK_p + \tau)s + AK_I}
+$$
+
+
+Podemos agora utilizar o LGR para calcular o ganho K, então assim temos
+
+Passo 1 e 2:
+
+$$
+1 + G(s)H(s) = 1 + \frac{A}{s + \tau} \frac{K_ps + K_I}{s} = 1 + K_p\frac{A(s + \tau_i)}{s(s+\tau)}
+$$
+
+Agora os passos do LGR definem
+
+
+Passo 3: Os lugares a esquerda de um numero impar de polos+zeros é LGR
+
+Passo 4: Polos: 0, $\tau$, Zeros: $\tau_i$
+
+Passo 5: $LS = max(N_p, N_z) = N_p = 2$
+
+Passo 6: Simetria
+
+Passo 7: $N_p - N_z = 2 - 1 = 1$ Polos seguem assíntotas em direção ao infinito
+
+
+O LGR é enfim mostrado abaixo
+
+
+![LGR Controle PI](root_locus_PI_control.png)
