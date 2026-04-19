@@ -189,6 +189,16 @@ Passo 6: Simetria
 
 Passo 7: $N_p - N_z = 2 - 1 = 1$ Polos seguem assíntotas em direção ao infinito
 
+Passo 8: Os pontos de saída podem ser encontrados de acordo com as raízes válidas da equação
+
+$$
+\frac{d}{ds} \frac{1}{P(s)} = 0
+$$
+
+Passo 9: Os cruzamentos no eixo imaginário são dados pelo método de Routh Hurwitz
+
+Passo 10: Não existem ângulos de saída porque não existem polos complexos.
+
 
 O LGR é enfim mostrado abaixo
 
