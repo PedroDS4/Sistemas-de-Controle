@@ -141,7 +141,7 @@ $$
 
 
 
-##**Controlando o nível do tanque: Controle de Sistema de Primeira ordem**
+## **Controlando o nível do tanque: Controle de Sistema de Primeira ordem**
 
 Considerando a função de transferência linearizada em torno do ponto de operação
 
