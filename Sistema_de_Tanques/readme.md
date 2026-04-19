@@ -1,4 +1,4 @@
-##**Sistema não Linear: Nível de Tanque**
+## **Sistema não Linear: Nível de Tanque**
 A dinâmica de entrada de tensão no motor até a vazão de saída é um sistema que pode ser modelado como uma simples relação de proporcionalidade, sendo assim
 
 $$
