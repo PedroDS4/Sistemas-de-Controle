@@ -6,78 +6,57 @@ t_max = 1000;
 
 N = t_max/dt;
 
-A_d = [[0.0877 0.1786 -0.0691];[-0.0595 0.0877 -0.1056];[0 0 0.3679]];
-B_d = [-0.0561 -0.1438 0.9482]';
-C = [1 0 0];
+A_d = [[1 0 2]; [0 1 0]; [2 3 -1]];
+B_d = [-1 2 0]';
+C = [1 0 1];
 
 
 U_d = controlability_matrix(A_d, B_d);
 
-
-
 V = observability_matrix(A_d, C);
 
+p = [ 0.5+0.5*1i 0.5-0.5*1i  -0.5+0.5*1i -0.5-0.5*1i]; 
 
-p = [ 0.9+0.1*1i 0.9-0.1*1i 0.1];
+K = step_follower(A_d, B_d, C, p)
 
-L = state_observator(A_d, C, p)
 
 %%
-
-A_error = A_d - L*C;
-
-x = zeros(3, N);
-x_hat = zeros(3, N);
-e = zeros(3, N);
-x(:, 1) = [1 1 1];
-
-e = x - x_hat;
-
+x = zeros(2, N);
+x(:, 1) = [1 1];
 u = ones(1, N);
+y = zeros(1, N);
 
-
-% Space State Simulation
 
 for i = 1:N-1
-    x(:, i+1) = (A_d*x(:, i) + B_d*u(i));
-    y(i+1) = C*x(:, i+1);
-    e(:, i+1) = (A_error*e(:, i));
+    u = K*x(:, i);
+    y(i+1) = C*x(:, i);
+    x(:, i+1) = (A_d*x(:, i) + B_d*u);
 end
 
-x_hat = x - e;
 
 t = linspace(0, t_max, N);
 blue = [0, 0.5, 0.8];
 red = [0.4, 0.1, 0];
-yellow = [1, 0.1, 0.5];
 
 
-color = {blue yellow red};
-color2 = {yellow, red, blue};
+color = {blue yellow};
 
+figure()
 
-for i = 1:3
-    figure()
-    plot(t, x(i, :), 'color', color{i}, 'linewidth', 4 + 2*(4 - i)); hold on;
-    plot(t, x_hat(i, :), 'color', color2{i}, 'linewidth', 1 + (4 - i));
-    legend('x', 'x_{est}');
-    xlabel('Time(s)');
-    ylabel('Amplitude');
-    grid on
+for i = 1:2
+    plot(t, x(i, :), 'color', color{i}, 'linewidth', 4 + 2*(2 - i)); hold on;
 end
 
 
-y_hat = C*x_hat;
-
-figure()
-plot(t, y, 'color', 'green', 'linewidth', 4 ); hold on
-plot(t, y_hat, 'color', 'black', 'linewidth', 2 );
-legend('y', 'y_{est}');
-xlabel('Time(s)');
-ylabel('Amplitude');
+legend('x1','x2')
 grid on
 
-
+%%
+figure()
+plot(t, y, 'color', 'magenta', 'linewidth', 4);
+xlabel('Time(s)');
+ylabel('A_dmplitU_dde');
+grid on
 
 
 
@@ -145,18 +124,41 @@ function K = state_realimentation(A_d, B_d, p)
 
 end
 
+function K_final = step_follower(A_d, B_d, C, p)
+    
+    M = length(A_d);
+    A_a = [A_d B_d;
+       zeros(1,M+1) ]
+   
+    N = length(A_a);  
+    
+    v_aux = zeros([1, N]);
+    v_aux(end) = 1;
+    
+    B_a = v_aux';
+    
+    U_d = controlability_matrix(A_a, B_a);
+    
+    p_s = poly(diag(p))
+    q_c = delta_s(A_a, p_s)
+    
+    K = v_aux * inv(U_d) * q_c;
+    K
+    A_final = [A_d - eye(length(A_d))  B_d; C*A_d  C*B_d];
+    K_final = [K + v_aux]*inv(A_final);
+end
 
 
 function K = state_observator(A_d, C, p)
     
-    V = observability_matrix(A_d, C)
+    V = observability_matrix(A_d, C);
     N = length(A_d);
-    p_s = poly(diag(p))
-    q_o = delta_s(A_d, p_s)
+    p_s = poly(diag(p));
+    q_o = delta_s(A_d, p_s);
     
     v_aux = zeros([1, N])';
     v_aux(end) = 1;
     
-    K = q_o * inv(V) * v_aux;
+    K = -v_aux * inv(V) * q_c;
 
 end

@@ -6,9 +6,9 @@ t_max = 1000;
 
 N = t_max/dt;
 
-A_d = [[1.543 -1.175];[-1.175 1.543]];
-B_d = [6.611 -6.979]';
-C = [0 1];
+A_d = [[1 0.632];[0 0.367]];
+B_d = [0.367 0.632]';
+C = [-2 3];
 
 
 U_d = controlability_matrix(A_d, B_d);
@@ -126,25 +126,24 @@ end
 
 function K_final = step_follower(A_d, B_d, C, p)
     
-    A_a = [A_d B_d; 0 0 0];
+    M = length(A_d);
+    A_a = [A_d B_d;
+       zeros(1,M+1) ]
    
-    
     N = length(A_a);  
     
     v_aux = zeros([1, N]);
     v_aux(end) = 1;
     
-     B_a = v_aux';
+    B_a = v_aux';
     
     U_d = controlability_matrix(A_a, B_a);
     
     p_s = poly(diag(p))
     q_c = delta_s(A_a, p_s)
     
-
-    
-    K = -v_aux * inv(U_d) * q_c;
-
+    K = v_aux * inv(U_d) * q_c;
+    K
     A_final = [A_d - eye(length(A_d))  B_d; C*A_d  C*B_d];
     K_final = [K + v_aux]*inv(A_final);
 end
